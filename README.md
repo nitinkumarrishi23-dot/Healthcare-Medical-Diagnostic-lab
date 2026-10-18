@@ -8,9 +8,15 @@ The project focuses on organizing and documenting the dataset, preprocessing med
 Project Objectives:-
 
 Organize and document the image dataset.
+
 Perform data cleaning and preprocessing.
+
 Conduct exploratory data analysis and visualize class distributions.
+
 Develop and train deep learning models for image classification.
+
 Evaluate model performance using appropriate metrics.
+
 Explore explainability methods to understand model predictions.
+
 Maintain a structured, collaborative, and reproducible development workflow.
