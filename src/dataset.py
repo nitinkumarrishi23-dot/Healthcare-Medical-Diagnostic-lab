@@ -2,14 +2,22 @@ from pathlib import Path
 from PIL import Image
 from torch.utils.data import Dataset, DataLoader
 from torchvision import transforms
-class medicalimagedataset(Dataset):   #finds image,loads the image, preprocesses them and returns labels.
-    def __init__(self,root):#stores the image folder path so it can be used later
+
+
+#transform pipeline
+basic_transform=transforms.Compose([
+    transforms.Resize((224,224)),
+    transforms.ToTensor()
+])
+
+class MedicalImageDataset(Dataset):   #finds image,loads the image, preprocesses them and returns labels.
+    def __init__(self,root,transform=basic_transform):#stores the image folder path so it can be used later
         self.folder_path=Path(root)
-        self.folders=[
+        self.folders=sorted([
             folder
             for folder in self.folder_path.iterdir()
             if folder.is_dir() 
-        ]       #find all class folders inside the dataset folder
+        ])     #find all class folders inside the dataset folder
 
 
     #to find folder name of each class folders
@@ -35,3 +43,29 @@ class medicalimagedataset(Dataset):   #finds image,loads the image, preprocesses
                 if img_path.is_file() and img_path.suffix.lower()in img_extensions: #checks whether the img_path is a file and if its a file is it a img file
                     self.image_path.append(img_path)
                     self.image_label.append(label)
+
+        self.transform=transform
+    def __len__(self):
+        return len(self.image_path)
+    def __getitem__(self, index):
+        img_path = self.image_path[index]
+        label = self.image_label[index]
+        with Image.open(img_path) as img:
+            image = img.convert("RGB")
+        if self.transform:
+            image = self.transform(image)
+
+        return image,label
+if __name__ == "__main__":
+    dataset = MedicalImageDataset("data/test_dummy")
+    loader=DataLoader(
+        dataset,
+        batch_size=4,
+        shuffle=True
+    )
+    print("Classes: ",dataset.classes)
+    print("Total images:",len(dataset))
+    for images, labels in loader:
+        print("Image batch shape:", images.shape)
+        print("Label batch shape:", labels.shape)
+        break
