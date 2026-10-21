@@ -29,3 +29,5 @@ logs/
 lightning_logs/
 wandb/
 
+
+data/medmnist/
